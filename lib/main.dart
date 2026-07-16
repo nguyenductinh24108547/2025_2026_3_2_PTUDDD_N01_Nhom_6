@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'screens/home_screen.dart';
 
 void main() {
   runApp(const MyApp());
@@ -79,58 +80,6 @@ class _MainScreenState extends State<MainScreen> {
             label: 'Cài đặt',
           ),
         ],
-      ),
-    );
-  }
-}
-
-// ==========================================
-// 🏠 MÀN HÌNH TRANG CHỦ (PHẦN VIỆC CỦA BẠN - TÚ)[cite: 1]
-// ==========================================
-class HomeScreen extends StatelessWidget {
-  const HomeScreen({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Học Từ Vựng Tiếng Anh'),
-        backgroundColor: Colors.blue,
-        foregroundColor: Colors.white,
-      ),
-      body: Center(
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment
-                .center, // Đã sửa lỗi ở đây!
-            children: const [
-              Icon(
-                Icons.home,
-                size: 80,
-                color: Colors.blue,
-              ),
-              SizedBox(height: 16),
-              Text(
-                'Chào mừng bạn đến với App Từ Vựng!',
-                style: TextStyle(
-                  fontSize: 22,
-                  fontWeight: FontWeight.bold,
-                ),
-                textAlign: TextAlign.center,
-              ),
-              SizedBox(height: 8),
-              Text(
-                'Đây là màn hình Trang chủ của Tú.\nBạn sẽ code danh mục từ vựng và đa ngôn ngữ tại đây.',
-                style: TextStyle(
-                  fontSize: 16,
-                  color: Colors.grey,
-                ),
-                textAlign: TextAlign.center,
-              ),
-            ],
-          ),
-        ),
       ),
     );
   }
