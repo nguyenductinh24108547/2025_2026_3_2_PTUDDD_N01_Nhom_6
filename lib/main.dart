@@ -1,3 +1,7 @@
+<<<<<<< HEAD
+import 'screens/vocabulary_screen.dart';
+=======
+>>>>>>> nhom/main
 import 'package:flutter/material.dart';
 import 'screens/home_screen.dart';
 import 'screens/quiz_screen.dart'; // Đã nhúng file Ôn tập của Tính
@@ -32,12 +36,19 @@ class _MainScreenState extends State<MainScreen> {
 
   // Đã cắm 2 màn hình của bạn vào đúng vị trí số 3 và 4
   final List<Widget> _screens = [
+<<<<<<< HEAD
+    const PlaceholderScreen(title: 'Trang chủ'),
+    const VocabularyScreen(), // <--- Màn hình Quản lý từ vựng của bạn
+    const PlaceholderScreen(title: 'Ôn tập'),
+    const PlaceholderScreen(title: 'Cài đặt'),
+=======
     const HomeScreen(),
     const PlaceholderScreen(
       title: 'Màn hình Học - Flashcard\n(Nhiệm vụ của Thành viên 2)',
     ),
     const QuizScreen(), // Màn hình Ôn tập (Thành viên 3)
     const SettingScreens(), // Màn hình Cài đặt (Thành viên 3)
+>>>>>>> nhom/main
   ];
 
   @override
