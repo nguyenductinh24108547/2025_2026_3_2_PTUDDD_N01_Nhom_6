@@ -1,26 +1,36 @@
 import 'package:flutter/material.dart';
+import '../main.dart'; // Đã thêm import main.dart để gọi appLocaleNotifier
 
 class SettingScreens extends StatefulWidget {
   const SettingScreens({super.key});
 
   @override
-  State<SettingScreens> createState() => _SettingScreensState();
+  State<SettingScreens> createState() =>
+      _SettingScreensState();
 }
 
 class _SettingScreensState extends State<SettingScreens> {
   bool isDarkMode = false;
-  bool isEnglish = false;
+  // Đã xóa dòng "bool isEnglish = false;" ở đây để tránh bị reset khi rebuild
 
   @override
   Widget build(BuildContext context) {
+    // Lấy trạng thái ngôn ngữ trực tiếp từ appLocaleNotifier
+    bool isEnglish =
+        appLocaleNotifier.value.languageCode == 'en';
+
     return Scaffold(
-      appBar: AppBar(title: const Text('Cài đặt'), centerTitle: true),
+      appBar: AppBar(
+        title: const Text('Cài đặt'),
+        centerTitle: true,
+      ),
       body: Padding(
         padding: const EdgeInsets.all(15.0),
         child: Column(
           children: [
             Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              mainAxisAlignment:
+                  MainAxisAlignment.spaceBetween,
               children: [
                 const Text(
                   'Chế độ tối (Dark Mode)',
@@ -38,13 +48,20 @@ class _SettingScreensState extends State<SettingScreens> {
             ),
 
             // Đường kẻ ngang phân cách
-            const Divider(height: 40, thickness: 1, color: Colors.grey),
+            const Divider(
+              height: 40,
+              thickness: 1,
+              color: Colors.grey,
+            ),
 
             Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              mainAxisAlignment:
+                  MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  isEnglish ? 'Ngôn ngữ: Tiếng Anh' : 'Ngôn ngữ: Tiếng Việt',
+                  isEnglish
+                      ? 'Ngôn ngữ: Tiếng Anh'
+                      : 'Ngôn ngữ: Tiếng Việt',
                   style: const TextStyle(fontSize: 18),
                 ),
                 Switch(
@@ -52,7 +69,10 @@ class _SettingScreensState extends State<SettingScreens> {
                   activeThumbColor: Colors.blue,
                   onChanged: (value) {
                     setState(() {
-                      isEnglish = value;
+                      // Đổi ngôn ngữ toàn App (isEnglish sẽ tự cập nhật ở hàm build)
+                      appLocaleNotifier.value = value
+                          ? const Locale('en')
+                          : const Locale('vi');
                     });
                   },
                 ),

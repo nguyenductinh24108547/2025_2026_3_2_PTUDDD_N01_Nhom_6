@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../l10n/app_localizations.dart'; // Đã thêm import l10n
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
@@ -12,6 +13,12 @@ class HomeScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Khai báo biến l10n để gọi từ vựng đa ngôn ngữ
+    final l10n = AppLocalizations.of(context)!;
+    final isEn =
+        Localizations.localeOf(context).languageCode ==
+        'en';
+
     return Scaffold(
       // Màu nền xám nhạt hiện đại giúp nổi bật các thẻ bên trong
       backgroundColor: const Color(0xFFF3F4F6),
@@ -31,7 +38,7 @@ class HomeScreen extends StatelessWidget {
                         CrossAxisAlignment.start,
                     children: [
                       Text(
-                        'Chào ngày mới, 👋',
+                        l10n.goodMorning, // Đã đổi sang biến dịch
                         style: TextStyle(
                           fontSize: 14,
                           color: Colors.grey.shade600,
@@ -70,7 +77,7 @@ class HomeScreen extends StatelessWidget {
               ),
               const SizedBox(height: 24),
 
-              // 2. Thanh tìm kiếm từ vựng (Sử dụng TextField cơ bản kết hợp đổ bóng nhẹ)
+              // 2. Thanh tìm kiếm từ vựng
               Container(
                 decoration: BoxDecoration(
                   boxShadow: [
@@ -83,7 +90,8 @@ class HomeScreen extends StatelessWidget {
                 ),
                 child: TextField(
                   decoration: InputDecoration(
-                    hintText: 'Tìm kiếm từ vựng, chủ đề...',
+                    hintText: l10n
+                        .searchHint, // Đã đổi sang biến dịch
                     hintStyle: TextStyle(
                       color: Colors.grey.shade400,
                       fontSize: 14,
@@ -109,7 +117,7 @@ class HomeScreen extends StatelessWidget {
               ),
               const SizedBox(height: 24),
 
-              // 3. Banner hiển thị tiến độ học tập trong ngày (Sử dụng dải màu chuyển sắc)
+              // 3. Banner hiển thị tiến độ học tập trong ngày
               Container(
                 width: double.infinity,
                 padding: const EdgeInsets.all(20),
@@ -135,18 +143,20 @@ class HomeScreen extends StatelessWidget {
                   crossAxisAlignment:
                       CrossAxisAlignment.start,
                   children: [
-                    const Text(
-                      'Tiến độ học hôm nay',
-                      style: TextStyle(
+                    Text(
+                      l10n.todayProgress, // Đã đổi sang biến dịch
+                      style: const TextStyle(
                         color: Colors.white70,
                         fontSize: 13,
                         fontWeight: FontWeight.w500,
                       ),
                     ),
                     const SizedBox(height: 6),
-                    // Công thức tự động tính toán tỷ lệ phần trăm thực tế
+                    // Công thức tự động tính toán tỷ lệ phần trăm theo ngôn ngữ
                     Text(
-                      'Đã hoàn thành ${((completedWords / totalWords) * 100).toInt()}% ($completedWords/$totalWords từ)',
+                      isEn
+                          ? 'Completed ${((completedWords / totalWords) * 100).toInt()}% ($completedWords/$totalWords words)'
+                          : 'Đã hoàn thành ${((completedWords / totalWords) * 100).toInt()}% ($completedWords/$totalWords từ)',
                       style: const TextStyle(
                         color: Colors.white,
                         fontSize: 19,
@@ -174,9 +184,9 @@ class HomeScreen extends StatelessWidget {
               const SizedBox(height: 28),
 
               // 4. Tiêu đề danh mục lối tắt
-              const Text(
-                'Lối tắt học tập',
-                style: TextStyle(
+              Text(
+                l10n.shortcuts, // Đã đổi sang biến dịch
+                style: const TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.bold,
                   color: Color(0xFF1F2937),
@@ -192,31 +202,38 @@ class HomeScreen extends StatelessWidget {
                 crossAxisCount: 2,
                 crossAxisSpacing: 16,
                 mainAxisSpacing: 16,
-                childAspectRatio:
-                    1.4, // Tỷ lệ tối ưu hiển thị cân đối trên cả Web và Mobile
+                childAspectRatio: 1.4,
                 children: [
                   _buildMenuCard(
                     Icons.style,
                     'Flashcard',
-                    'Học từ vựng',
+                    isEn
+                        ? 'Learn vocabulary'
+                        : 'Học từ vựng',
                     Colors.orange,
                   ),
                   _buildMenuCard(
                     Icons.quiz,
-                    'Trắc nghiệm',
-                    'Luyện tập nhanh',
+                    isEn ? 'Quiz' : 'Trắc nghiệm',
+                    isEn
+                        ? 'Quick practice'
+                        : 'Luyện tập nhanh',
                     Colors.green,
                   ),
                   _buildMenuCard(
                     Icons.leaderboard,
-                    'Xếp hạng',
-                    'Thi đua nhóm',
+                    isEn ? 'Leaderboard' : 'Xếp hạng',
+                    isEn
+                        ? 'Group competition'
+                        : 'Thi đua nhóm',
                     Colors.purple,
                   ),
                   _buildMenuCard(
                     Icons.analytics,
-                    'Thống kê',
-                    'Tiến độ học tập',
+                    isEn ? 'Statistics' : 'Thống kê',
+                    isEn
+                        ? 'Learning progress'
+                        : 'Tiến độ học tập',
                     Colors.teal,
                   ),
                 ],
@@ -228,7 +245,7 @@ class HomeScreen extends StatelessWidget {
     );
   }
 
-  // Hàm bổ trợ thiết kế các ô chức năng (Được đặt trong class HomeScreen)
+  // Hàm bổ trợ thiết kế các ô chức năng
   Widget _buildMenuCard(
     IconData icon,
     String title,
@@ -252,7 +269,6 @@ class HomeScreen extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          // Vòng tròn màu nền mờ bao quanh icon tạo điểm nhấn thiết kế phẳng
           Container(
             padding: const EdgeInsets.all(10),
             decoration: BoxDecoration(
