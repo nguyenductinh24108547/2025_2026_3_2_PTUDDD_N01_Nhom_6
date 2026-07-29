@@ -4,7 +4,7 @@ class Vocabulary {
   final String definition;
   final String example;
 
-  Vocabulary({
+  const Vocabulary({
     required this.id,
     required this.term,
     required this.definition,
