@@ -1,11 +1,8 @@
-<<<<<<< HEAD
-import 'screens/vocabulary_screen.dart';
-=======
->>>>>>> nhom/main
 import 'package:flutter/material.dart';
+import 'screens/vocabulary_screen.dart';
 import 'screens/home_screen.dart';
-import 'screens/quiz_screen.dart'; // Đã nhúng file Ôn tập của Tính
-import 'screens/setting_screens.dart'; // Đã nhúng file Cài đặt của Tính
+import 'screens/quiz_screen.dart';
+import 'screens/setting_screens.dart';
 
 void main() {
   runApp(const MyApp());
