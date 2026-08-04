@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../main.dart'; // Gọi appLocaleNotifier từ main.dart
+import '../main.dart'; // Sử dụng themeNotifier và appLocaleNotifier
 
 class SettingScreens extends StatefulWidget {
   const SettingScreens({super.key});
@@ -10,17 +10,13 @@ class SettingScreens extends StatefulWidget {
 }
 
 class _SettingScreensState extends State<SettingScreens> {
-  bool isDarkMode = false;
-  bool isNotificationOn = true; // Khai báo biến thông báo
+  bool isNotificationOn = true;
 
   @override
   Widget build(BuildContext context) {
-    // Lấy trạng thái ngôn ngữ trực tiếp từ appLocaleNotifier
     bool isEnglish =
         appLocaleNotifier.value.languageCode == 'en';
-    Color textColor = isDarkMode
-        ? Colors.white
-        : Colors.black;
+    bool isDarkMode = themeNotifier.value == ThemeMode.dark;
 
     return Scaffold(
       appBar: AppBar(
@@ -50,12 +46,11 @@ class _SettingScreensState extends State<SettingScreens> {
                     crossAxisAlignment:
                         CrossAxisAlignment.start,
                     children: [
-                      Text(
+                      const Text(
                         'MAI VĂN TÍNH',
                         style: TextStyle(
                           fontSize: 20,
                           fontWeight: FontWeight.bold,
-                          color: textColor,
                         ),
                       ),
                       Text(
@@ -72,22 +67,15 @@ class _SettingScreensState extends State<SettingScreens> {
                 ],
               ),
 
-              const Divider(
-                height: 40,
-                thickness: 1,
-                color: Colors.grey,
-              ),
+              const Divider(height: 40, thickness: 1),
 
-              // Switch Đổi ngôn ngữ (Đã đồng bộ với appLocaleNotifier)
+              // Switch Đổi ngôn ngữ
               SwitchListTile(
                 title: Text(
                   isEnglish
                       ? 'English Language'
                       : 'Ngôn ngữ Tiếng Anh',
-                  style: TextStyle(
-                    fontSize: 16,
-                    color: textColor,
-                  ),
+                  style: const TextStyle(fontSize: 16),
                 ),
                 secondary: const Icon(
                   Icons.language,
@@ -103,25 +91,26 @@ class _SettingScreensState extends State<SettingScreens> {
                 },
               ),
 
-              // Switch Chế độ tối
+              // Switch Chế độ tối (Đã kích hoạt themeNotifier)
               SwitchListTile(
                 title: Text(
                   isEnglish
                       ? 'Dark Mode'
                       : 'Chế độ ban đêm',
-                  style: TextStyle(
-                    fontSize: 16,
-                    color: textColor,
-                  ),
+                  style: const TextStyle(fontSize: 16),
                 ),
-                secondary: const Icon(
+                secondary: Icon(
                   Icons.dark_mode,
-                  color: Colors.indigo,
+                  color: isDarkMode
+                      ? Colors.amber
+                      : Colors.indigo,
                 ),
                 value: isDarkMode,
                 onChanged: (value) {
                   setState(() {
-                    isDarkMode = value;
+                    themeNotifier.value = value
+                        ? ThemeMode.dark
+                        : ThemeMode.light;
                   });
                 },
               ),
@@ -132,10 +121,7 @@ class _SettingScreensState extends State<SettingScreens> {
                   isEnglish
                       ? 'Notifications'
                       : 'Thông báo học từ vựng',
-                  style: TextStyle(
-                    fontSize: 16,
-                    color: textColor,
-                  ),
+                  style: const TextStyle(fontSize: 16),
                 ),
                 secondary: const Icon(
                   Icons.notifications_active,
@@ -152,10 +138,9 @@ class _SettingScreensState extends State<SettingScreens> {
               const SizedBox(height: 20),
               Text(
                 isEnglish ? 'Others' : 'Khác',
-                style: TextStyle(
+                style: const TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.bold,
-                  color: textColor,
                 ),
               ),
               const SizedBox(height: 10),
@@ -169,10 +154,7 @@ class _SettingScreensState extends State<SettingScreens> {
                   isEnglish
                       ? 'Group Information'
                       : 'Thông tin nhóm',
-                  style: TextStyle(
-                    fontSize: 16,
-                    color: textColor,
-                  ),
+                  style: const TextStyle(fontSize: 16),
                 ),
                 trailing: const Icon(
                   Icons.arrow_forward_ios,
