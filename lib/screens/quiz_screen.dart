@@ -8,49 +8,101 @@ class QuizScreen extends StatefulWidget {
 }
 
 class _QuizScreenState extends State<QuizScreen> {
-  int currentQuestionIndex = 0;
-  int score = 0;
-
-  // Dữ liệu giả (Dummy data) cho bài tập trắc nghiệm
   final List<Map<String, dynamic>> questions = [
     {
       'question': 'Từ "Apple" nghĩa là gì?',
-      'answers': ['Quả cam', 'Quả táo', 'Quả lê', 'Quả dưa'],
-      'correctIndex': 1, // Vị trí đáp án đúng (Bắt đầu từ 0)
+      'options': ['Con chó', 'Quả táo', 'Nước uống', 'Cái cây'],
+      'answerIndex': 1,
+    },
+    {
+      'question': 'Từ "Banana" nghĩa là gì?',
+      'options': ['Quả chuối', 'Con mèo', 'Quyển sách', 'Xe ô tô'],
+      'answerIndex': 0,
+    },
+    {
+      'question': 'Từ "Cat" nghĩa là gì?',
+      'options': ['Ngôi nhà', 'Quả táo', 'Con mèo', 'Mặt trời'],
+      'answerIndex': 2,
     },
     {
       'question': 'Từ "Dog" nghĩa là gì?',
-      'answers': ['Con mèo', 'Con chim', 'Con chó', 'Con cá'],
-      'correctIndex': 2,
+      'options': ['Xe ô tô', 'Nước uống', 'Quả chuối', 'Con chó'],
+      'answerIndex': 3,
+    },
+    {
+      'question': 'Từ "Book" nghĩa là gì?',
+      'options': ['Quyển sách', 'Mặt trời', 'Cái cây', 'Ngôi nhà'],
+      'answerIndex': 0,
+    },
+    {
+      'question': 'Từ "Car" nghĩa là gì?',
+      'options': ['Quả táo', 'Xe ô tô', 'Con chó', 'Nước uống'],
+      'answerIndex': 1,
+    },
+    {
+      'question': 'Từ "Sun" nghĩa là gì?',
+      'options': ['Cái cây', 'Con mèo', 'Mặt trời', 'Quả chuối'],
+      'answerIndex': 2,
+    },
+    {
+      'question': 'Từ "Water" nghĩa là gì?',
+      'options': ['Quyển sách', 'Ngôi nhà', 'Mặt trời', 'Nước uống'],
+      'answerIndex': 3,
+    },
+    {
+      'question': 'Từ "House" nghĩa là gì?',
+      'options': ['Ngôi nhà', 'Quả táo', 'Xe ô tô', 'Cái cây'],
+      'answerIndex': 0,
+    },
+    {
+      'question': 'Từ "Tree" nghĩa là gì?',
+      'options': ['Con mèo', 'Cái cây', 'Nước uống', 'Quyển sách'],
+      'answerIndex': 1,
     },
   ];
 
-  // Hàm kiểm tra đáp án
-  void checkAnswer(int selectedIndex) {
-    if (selectedIndex == questions[currentQuestionIndex]['correctIndex']) {
-      score++; // Trả lời đúng thì cộng 1 điểm
-    }
+  int currentIndex = 0;
+  int score = 0;
+  int? selectedAnswer;
+  bool isAnswered = false;
+
+  void checkAnswer(int index) {
+    if (isAnswered) return;
 
     setState(() {
-      if (currentQuestionIndex < questions.length - 1) {
-        currentQuestionIndex++; // Chuyển sang câu tiếp theo
+      selectedAnswer = index;
+      isAnswered = true;
+      if (index == questions[currentIndex]['answerIndex']) {
+        score++;
+      }
+    });
+
+    Future.delayed(const Duration(seconds: 1), () {
+      if (currentIndex < questions.length - 1) {
+        setState(() {
+          currentIndex++;
+          selectedAnswer = null;
+          isAnswered = false;
+        });
       } else {
-        // Hết câu hỏi thì hiển thị kết quả
         showDialog(
           context: context,
+          barrierDismissible: false,
           builder: (context) => AlertDialog(
-            title: const Text('Hoàn thành!'),
-            content: Text('Điểm của bạn: $score / ${questions.length}'),
+            title: const Text('Kết quả'),
+            content: Text('Bạn đã làm đúng $score/${questions.length} câu.'),
             actions: [
               TextButton(
                 onPressed: () {
                   Navigator.pop(context);
                   setState(() {
-                    currentQuestionIndex = 0; // Reset game
+                    currentIndex = 0;
                     score = 0;
+                    selectedAnswer = null;
+                    isAnswered = false;
                   });
                 },
-                child: const Text('Chơi lại'),
+                child: const Text('Làm lại'),
               ),
             ],
           ),
@@ -61,42 +113,90 @@ class _QuizScreenState extends State<QuizScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text('Ôn tập (Quiz)'), centerTitle: true),
-      body: Padding(
-        padding: const EdgeInsets.all(15.0),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            Text(
-              'Câu ${currentQuestionIndex + 1} / ${questions.length}',
-              textAlign: TextAlign.center,
-              style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(height: 20),
-            Text(
-              questions[currentQuestionIndex]['question'],
-              textAlign: TextAlign.center,
-              style: const TextStyle(fontSize: 24, color: Colors.blue),
-            ),
-            const SizedBox(height: 40),
+    var currentQ = questions[currentIndex];
 
-            // Dùng vòng lặp để tạo 4 nút bấm
-            ...List.generate(
-              questions[currentQuestionIndex]['answers'].length,
-              (index) => Padding(
-                padding: const EdgeInsets.only(bottom: 10.0),
-                child: ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    padding: const EdgeInsets.symmetric(vertical: 15),
-                  ),
-                  onPressed: () => checkAnswer(index),
-                  child: Text(
-                    questions[currentQuestionIndex]['answers'][index],
-                    style: const TextStyle(fontSize: 18),
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Ôn tập'),
+        backgroundColor: Colors.blue,
+        foregroundColor: Colors.white,
+      ),
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  'Câu ${currentIndex + 1}/${questions.length}',
+                  style: const TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
                   ),
                 ),
+                Text(
+                  'Điểm: $score',
+                  style: const TextStyle(fontSize: 18, color: Colors.blue),
+                ),
+              ],
+            ),
+            const SizedBox(height: 20),
+            Container(
+              padding: const EdgeInsets.all(20),
+              decoration: BoxDecoration(
+                color: Colors.blue.shade50,
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: Center(
+                child: Text(
+                  currentQ['question'],
+                  style: const TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+              ),
+            ),
+            const SizedBox(height: 30),
+            Expanded(
+              child: ListView.builder(
+                itemCount: currentQ['options'].length,
+                itemBuilder: (context, index) {
+                  bool isCorrect = index == currentQ['answerIndex'];
+                  bool isSelected = index == selectedAnswer;
+
+                  Color boxColor = Colors.white;
+                  Color borderColor = Colors.grey;
+
+                  if (isAnswered) {
+                    if (isCorrect) {
+                      boxColor = Colors.green.shade100;
+                      borderColor = Colors.green;
+                    } else if (isSelected) {
+                      boxColor = Colors.red.shade100;
+                      borderColor = Colors.red;
+                    }
+                  }
+
+                  return GestureDetector(
+                    onTap: () => checkAnswer(index),
+                    child: Container(
+                      margin: const EdgeInsets.only(bottom: 15),
+                      padding: const EdgeInsets.all(15),
+                      decoration: BoxDecoration(
+                        color: boxColor,
+                        border: Border.all(color: borderColor),
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      child: Text(
+                        currentQ['options'][index],
+                        style: const TextStyle(fontSize: 16),
+                      ),
+                    ),
+                  );
+                },
               ),
             ),
           ],
