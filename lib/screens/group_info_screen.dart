@@ -28,20 +28,20 @@ class GroupInfoScreen extends StatelessWidget {
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
-          crossAxisAlignment: CrossAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Card(
+            Card(
               color: Colors.blueAccent,
               child: Padding(
-                padding: EdgeInsets.all(16.0),
+                padding: const EdgeInsets.all(16.0),
                 child: Row(
                   children: [
-                    Icon(Icons.groups, size: 50, color: Colors.white),
-                    SizedBox(width: 16),
+                    const Icon(Icons.groups, size: 50, color: Colors.white),
+                    const SizedBox(width: 16),
                     Column(
-                      crossAxisAlignment: CrossAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(
+                        const Text(
                           'NHÓM 6 - PTUDDD',
                           style: TextStyle(
                             fontSize: 20,
@@ -80,7 +80,7 @@ class GroupInfoScreen extends StatelessWidget {
                         style: const TextStyle(fontWeight: FontWeight.bold),
                       ),
                       subtitle: Column(
-                        crossAxisAlignment: CrossAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text('Vai trò: ${member['role']}'),
                           Text('Nhiệm vụ: ${member['task']}'),

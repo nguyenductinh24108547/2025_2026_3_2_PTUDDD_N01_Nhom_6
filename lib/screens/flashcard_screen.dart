@@ -1,5 +1,5 @@
-import 'dart:math';
 import 'package:flutter/material.dart';
+import '../main.dart';
 
 class Vocabulary {
   final String id;
@@ -21,8 +21,7 @@ class FlashcardScreen extends StatefulWidget {
 }
 
 class _FlashcardScreenState extends State<FlashcardScreen> {
-  // Danh sách từ vựng lấy chuẩn theo vocabulary_screen.dart
-  final List<Vocabulary> _vocabList = const [
+  final List<Vocabulary> sampleVocabularies = const [
     Vocabulary(id: '1', term: 'Apple', definition: 'Quả táo'),
     Vocabulary(id: '2', term: 'Banana', definition: 'Quả chuối'),
     Vocabulary(id: '3', term: 'Cat', definition: 'Con mèo'),
@@ -35,174 +34,148 @@ class _FlashcardScreenState extends State<FlashcardScreen> {
     Vocabulary(id: '10', term: 'Tree', definition: 'Cái cây'),
   ];
 
-  int _currentIndex = 0;
-  bool _showFront = true;
-
-  void _flipCard() {
-    setState(() {
-      _showFront = !_showFront;
-    });
-  }
-
+  int currentIndex = 0;
+  bool isFlipped = false;
   void _nextCard() {
-    if (_currentIndex < _vocabList.length - 1) {
+    if (currentIndex < sampleVocabularies.length - 1) {
       setState(() {
-        _currentIndex++;
-        _showFront = true;
+        currentIndex++;
+        isFlipped = false;
       });
     }
   }
 
   void _previousCard() {
-    if (_currentIndex > 0) {
+    if (currentIndex > 0) {
       setState(() {
-        _currentIndex--;
-        _showFront = true;
+        currentIndex--;
+        isFlipped = false;
       });
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    final currentItem = _vocabList[_currentIndex];
+    return ValueListenableBuilder<Locale>(
+      valueListenable: appLocaleNotifier,
+      builder: (context, locale, child) {
+        final bool isEnglishApp = locale.languageCode == 'en';
+        final currentItem = sampleVocabularies[currentIndex];
 
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Học Từ Vựng (Flashcard)'),
-        centerTitle: true,
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(20.0),
-        child: Column(
-          children: [
-            // Tiến độ học
-            Text(
-              'Từ ${_currentIndex + 1} / ${_vocabList.length}',
-              style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+        final String frontText = isEnglishApp
+            ? currentItem.term
+            : currentItem.definition;
+        final String backText = isEnglishApp
+            ? currentItem.definition
+            : currentItem.term;
+
+        return Scaffold(
+          appBar: AppBar(
+            title: Text(
+              isEnglishApp ? 'Vocabulary Flashcard' : 'Học Từ Vựng (Flashcard)',
             ),
-            const SizedBox(height: 20),
-
-            // Thẻ Flashcard
-            Expanded(
-              child: GestureDetector(
-                onTap: _flipCard,
-                child: AnimatedSwitcher(
-                  duration: const Duration(milliseconds: 500),
-                  transitionBuilder:
-                      (Widget child, Animation<double> animation) {
-                        final rotate = Tween(
-                          begin: pi,
-                          end: 0.0,
-                        ).animate(animation);
-                        return AnimatedBuilder(
-                          animation: rotate,
-                          child: child,
-                          builder: (context, child) {
-                            final isUnder =
-                                (ValueKey(_showFront) != child?.key);
-                            var tilt =
-                                ((animation.value - 0.5).abs() - 0.5) * 0.003;
-                            tilt *= isUnder ? -1.0 : 1.0;
-                            final value = isUnder
-                                ? min(rotate.value, pi / 2)
-                                : rotate.value;
-                            return Transform(
-                              transform: Matrix4.rotationY(value)
-                                ..setEntry(3, 2, tilt),
-                              alignment: Alignment.center,
-                              child: child,
-                            );
-                          },
-                        );
-                      },
-                  child: _showFront
-                      ? _buildFrontCard(currentItem)
-                      : _buildBackCard(currentItem),
-                ),
-              ),
-            ),
-
-            const SizedBox(height: 30),
-
-            // Nút chuyển thẻ
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            centerTitle: true,
+          ),
+          body: Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
               children: [
-                ElevatedButton.icon(
-                  onPressed: _currentIndex > 0 ? _previousCard : null,
-                  icon: const Icon(Icons.arrow_back),
-                  label: const Text('Thẻ trước'),
+                Text(
+                  isEnglishApp
+                      ? 'Word ${currentIndex + 1} / ${sampleVocabularies.length}'
+                      : 'Từ ${currentIndex + 1} / ${sampleVocabularies.length}',
+                  style: const TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
-                ElevatedButton.icon(
-                  onPressed: _currentIndex < _vocabList.length - 1
-                      ? _nextCard
-                      : null,
-                  icon: const Icon(Icons.arrow_forward),
-                  label: const Text('Thẻ tiếp'),
+                const SizedBox(height: 16),
+
+                Expanded(
+                  child: GestureDetector(
+                    onTap: () {
+                      setState(() {
+                        isFlipped = !isFlipped;
+                      });
+                    },
+                    child: Card(
+                      elevation: 4,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(16),
+                      ),
+                      color: isFlipped
+                          ? Colors.orange.shade50
+                          : Colors.blue.shade50,
+                      child: Container(
+                        width: double.infinity,
+                        alignment: Alignment.center,
+                        padding: const EdgeInsets.all(24.0),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(
+                              isFlipped ? Icons.translate : Icons.touch_app,
+                              size: 48,
+                              color: isFlipped ? Colors.orange : Colors.blue,
+                            ),
+                            const SizedBox(height: 20),
+                            Text(
+                              isFlipped ? backText : frontText,
+                              style: TextStyle(
+                                fontSize: 32,
+                                fontWeight: FontWeight.bold,
+                                color: isFlipped
+                                    ? Colors.orange.shade800
+                                    : Colors.blue.shade800,
+                              ),
+                              textAlign: TextAlign.center,
+                            ),
+                            const SizedBox(height: 12),
+                            Text(
+                              isFlipped
+                                  ? (isEnglishApp
+                                        ? '(Vietnamese Meaning)'
+                                        : '(Nghĩa Tiếng Anh)')
+                                  : (isEnglishApp
+                                        ? '(Tap to see meaning)'
+                                        : '(Chạm để xem nghĩa)'),
+                              style: TextStyle(
+                                fontSize: 14,
+                                color: Colors.grey.shade600,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
                 ),
+
+                const SizedBox(height: 20),
+
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    ElevatedButton.icon(
+                      onPressed: currentIndex > 0 ? _previousCard : null,
+                      icon: const Icon(Icons.arrow_back),
+                      label: Text(isEnglishApp ? 'Previous' : 'Thẻ trước'),
+                    ),
+                    ElevatedButton.icon(
+                      onPressed: currentIndex < sampleVocabularies.length - 1
+                          ? _nextCard
+                          : null,
+                      icon: const Icon(Icons.arrow_forward),
+                      label: Text(isEnglishApp ? 'Next' : 'Thẻ tiếp'),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 16),
               ],
             ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildFrontCard(Vocabulary item) {
-    return Card(
-      key: const ValueKey(true),
-      elevation: 6,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-      color: Colors.blue.shade50,
-      child: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            const Icon(Icons.touch_app, size: 40, color: Colors.blue),
-            const SizedBox(height: 20),
-            Text(
-              item.term,
-              style: const TextStyle(
-                fontSize: 36,
-                fontWeight: FontWeight.bold,
-                color: Colors.blue,
-              ),
-            ),
-            const SizedBox(height: 10),
-            const Text(
-              '(Chạm để xem nghĩa)',
-              style: TextStyle(color: Colors.grey),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildBackCard(Vocabulary item) {
-    return Card(
-      key: const ValueKey(false),
-      elevation: 6,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-      color: Colors.orange.shade50,
-      child: Center(
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Text(
-                item.definition,
-                style: const TextStyle(
-                  fontSize: 32,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.orange,
-                ),
-              ),
-            ],
           ),
-        ),
-      ),
+        );
+      },
     );
   }
 }
