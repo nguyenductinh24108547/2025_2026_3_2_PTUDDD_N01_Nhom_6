@@ -1,0 +1,14 @@
+{
+  "hello": "Hello",
+  "appTitle": "English Vocabulary App",
+  "settings": "Settings",
+  "language": "Language",
+  "navHome": "Home",
+  "navLearn": "Learn",
+  "navPractice": "Practice",
+  "navSettings": "Settings",
+  "goodMorning": "Good morning, 👋",
+  "searchHint": "Search vocabulary, topics...",
+  "todayProgress": "Today's progress",
+  "shortcuts": "Learning shortcuts"
+}

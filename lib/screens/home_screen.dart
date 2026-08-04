@@ -1,27 +1,29 @@
 import 'package:flutter/material.dart';
+import '../l10n/app_localizations.dart';
+import '../main.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
 
-  // Khai báo thông tin người dùng
   final String userName = 'MAI VĂN TÍNH';
-
-  // Khai báo số từ vựng để tự động tính toán tiến độ học tập
   final int totalWords = 10;
-  final int completedWords = 7;
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    final isEn =
+        Localizations.localeOf(context).languageCode ==
+        'en';
+    final cardBgColor = Theme.of(context).cardColor;
+
     return Scaffold(
-      // Màu nền xám nhạt hiện đại giúp nổi bật các thẻ bên trong
-      backgroundColor: const Color(0xFFF3F4F6),
       body: SafeArea(
         child: SingleChildScrollView(
           padding: const EdgeInsets.all(20.0),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // 1. Phần thông tin tài khoản và Avatar
+              // 1. Thông tin người dùng
               Row(
                 mainAxisAlignment:
                     MainAxisAlignment.spaceBetween,
@@ -31,10 +33,10 @@ class HomeScreen extends StatelessWidget {
                         CrossAxisAlignment.start,
                     children: [
                       Text(
-                        'Chào ngày mới, 👋',
+                        l10n.goodMorning,
                         style: TextStyle(
                           fontSize: 14,
-                          color: Colors.grey.shade600,
+                          color: Colors.grey.shade500,
                           fontWeight: FontWeight.w500,
                         ),
                       ),
@@ -44,12 +46,10 @@ class HomeScreen extends StatelessWidget {
                         style: const TextStyle(
                           fontSize: 22,
                           fontWeight: FontWeight.bold,
-                          color: Color(0xFF1F2937),
                         ),
                       ),
                     ],
                   ),
-                  // Avatar người dùng với viền màu xanh
                   Container(
                     padding: const EdgeInsets.all(2),
                     decoration: const BoxDecoration(
@@ -70,9 +70,10 @@ class HomeScreen extends StatelessWidget {
               ),
               const SizedBox(height: 24),
 
-              // 2. Thanh tìm kiếm từ vựng (Sử dụng TextField cơ bản kết hợp đổ bóng nhẹ)
+              // 2. Ô tìm kiếm
               Container(
                 decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(16),
                   boxShadow: [
                     BoxShadow(
                       color: Colors.black.withOpacity(0.04),
@@ -83,17 +84,13 @@ class HomeScreen extends StatelessWidget {
                 ),
                 child: TextField(
                   decoration: InputDecoration(
-                    hintText: 'Tìm kiếm từ vựng, chủ đề...',
-                    hintStyle: TextStyle(
-                      color: Colors.grey.shade400,
-                      fontSize: 14,
-                    ),
+                    hintText: l10n.searchHint,
                     prefixIcon: const Icon(
                       Icons.search,
                       color: Colors.blueAccent,
                     ),
                     filled: true,
-                    fillColor: Colors.white,
+                    fillColor: cardBgColor,
                     contentPadding:
                         const EdgeInsets.symmetric(
                           vertical: 16,
@@ -109,82 +106,87 @@ class HomeScreen extends StatelessWidget {
               ),
               const SizedBox(height: 24),
 
-              // 3. Banner hiển thị tiến độ học tập trong ngày (Sử dụng dải màu chuyển sắc)
-              Container(
-                width: double.infinity,
-                padding: const EdgeInsets.all(20),
-                decoration: BoxDecoration(
-                  gradient: const LinearGradient(
-                    colors: [
-                      Color(0xFF3B82F6),
-                      Color(0xFF1D4ED8),
-                    ],
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                  ),
-                  borderRadius: BorderRadius.circular(20),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.blue.withOpacity(0.2),
-                      blurRadius: 12,
-                      offset: const Offset(0, 6),
-                    ),
-                  ],
-                ),
-                child: Column(
-                  crossAxisAlignment:
-                      CrossAxisAlignment.start,
-                  children: [
-                    const Text(
-                      'Tiến độ học hôm nay',
-                      style: TextStyle(
-                        color: Colors.white70,
-                        fontSize: 13,
-                        fontWeight: FontWeight.w500,
+              // 3. Tiến độ học tập
+              ValueListenableBuilder<int>(
+                valueListenable: scoreNotifier,
+                builder: (context, completedWords, child) {
+                  double progressValue =
+                      (completedWords / totalWords).clamp(
+                        0.0,
+                        1.0,
+                      );
+                  int percentage = (progressValue * 100)
+                      .toInt();
+
+                  return Container(
+                    width: double.infinity,
+                    padding: const EdgeInsets.all(20),
+                    decoration: BoxDecoration(
+                      gradient: const LinearGradient(
+                        colors: [
+                          Color(0xFF3B82F6),
+                          Color(0xFF1D4ED8),
+                        ],
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
                       ),
-                    ),
-                    const SizedBox(height: 6),
-                    // Công thức tự động tính toán tỷ lệ phần trăm thực tế
-                    Text(
-                      'Đã hoàn thành ${((completedWords / totalWords) * 100).toInt()}% ($completedWords/$totalWords từ)',
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontSize: 19,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    const SizedBox(height: 14),
-                    ClipRRect(
                       borderRadius: BorderRadius.circular(
-                        10,
-                      ),
-                      child: LinearProgressIndicator(
-                        value: completedWords / totalWords,
-                        backgroundColor: Colors.white24,
-                        valueColor:
-                            const AlwaysStoppedAnimation<
-                              Color
-                            >(Colors.white),
-                        minHeight: 8,
+                        20,
                       ),
                     ),
-                  ],
-                ),
+                    child: Column(
+                      crossAxisAlignment:
+                          CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          l10n.todayProgress,
+                          style: const TextStyle(
+                            color: Colors.white70,
+                            fontSize: 13,
+                          ),
+                        ),
+                        const SizedBox(height: 6),
+                        Text(
+                          isEn
+                              ? 'Completed $percentage% ($completedWords/$totalWords words)'
+                              : 'Đã hoàn thành $percentage% ($completedWords/$totalWords từ)',
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontSize: 19,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        const SizedBox(height: 14),
+                        ClipRRect(
+                          borderRadius:
+                              BorderRadius.circular(10),
+                          child: LinearProgressIndicator(
+                            value: progressValue,
+                            backgroundColor: Colors.white24,
+                            valueColor:
+                                const AlwaysStoppedAnimation<
+                                  Color
+                                >(Colors.white),
+                            minHeight: 8,
+                          ),
+                        ),
+                      ],
+                    ),
+                  );
+                },
               ),
               const SizedBox(height: 28),
 
-              // 4. Tiêu đề danh mục lối tắt
-              const Text(
-                'Lối tắt học tập',
-                style: TextStyle(
+              // 4. Các lối tắt
+              Text(
+                l10n.shortcuts,
+                style: const TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.bold,
-                  color: Color(0xFF1F2937),
                 ),
               ),
               const SizedBox(height: 16),
 
-              // 5. Grid phân bổ các tính năng chính của ứng dụng
               GridView.count(
                 shrinkWrap: true,
                 physics:
@@ -192,31 +194,42 @@ class HomeScreen extends StatelessWidget {
                 crossAxisCount: 2,
                 crossAxisSpacing: 16,
                 mainAxisSpacing: 16,
-                childAspectRatio:
-                    1.4, // Tỷ lệ tối ưu hiển thị cân đối trên cả Web và Mobile
+                childAspectRatio: 1.4,
                 children: [
                   _buildMenuCard(
+                    context,
                     Icons.style,
                     'Flashcard',
-                    'Học từ vựng',
+                    isEn
+                        ? 'Learn vocabulary'
+                        : 'Học từ vựng',
                     Colors.orange,
                   ),
                   _buildMenuCard(
+                    context,
                     Icons.quiz,
-                    'Trắc nghiệm',
-                    'Luyện tập nhanh',
+                    isEn ? 'Quiz' : 'Trắc nghiệm',
+                    isEn
+                        ? 'Quick practice'
+                        : 'Luyện tập nhanh',
                     Colors.green,
                   ),
                   _buildMenuCard(
+                    context,
                     Icons.leaderboard,
-                    'Xếp hạng',
-                    'Thi đua nhóm',
+                    isEn ? 'Leaderboard' : 'Xếp hạng',
+                    isEn
+                        ? 'Group competition'
+                        : 'Thi đua nhóm',
                     Colors.purple,
                   ),
                   _buildMenuCard(
+                    context,
                     Icons.analytics,
-                    'Thống kê',
-                    'Tiến độ học tập',
+                    isEn ? 'Statistics' : 'Thống kê',
+                    isEn
+                        ? 'Learning progress'
+                        : 'Tiến độ học tập',
                     Colors.teal,
                   ),
                 ],
@@ -228,8 +241,8 @@ class HomeScreen extends StatelessWidget {
     );
   }
 
-  // Hàm bổ trợ thiết kế các ô chức năng (Được đặt trong class HomeScreen)
   Widget _buildMenuCard(
+    BuildContext context,
     IconData icon,
     String title,
     String desc,
@@ -238,21 +251,12 @@ class HomeScreen extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: Theme.of(context).cardColor,
         borderRadius: BorderRadius.circular(20),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.02),
-            blurRadius: 10,
-            offset: const Offset(0, 4),
-          ),
-        ],
       ),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          // Vòng tròn màu nền mờ bao quanh icon tạo điểm nhấn thiết kế phẳng
           Container(
             padding: const EdgeInsets.all(10),
             decoration: BoxDecoration(
@@ -267,7 +271,6 @@ class HomeScreen extends StatelessWidget {
             style: const TextStyle(
               fontWeight: FontWeight.bold,
               fontSize: 15,
-              color: Color(0xFF1F2937),
             ),
             textAlign: TextAlign.center,
           ),

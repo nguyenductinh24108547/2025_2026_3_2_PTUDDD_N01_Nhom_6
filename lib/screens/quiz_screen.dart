@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../main.dart';
 
 class QuizScreen extends StatefulWidget {
   const QuizScreen({super.key});
@@ -11,52 +12,102 @@ class _QuizScreenState extends State<QuizScreen> {
   final List<Map<String, dynamic>> questions = [
     {
       'question': 'Từ "Apple" nghĩa là gì?',
-      'options': ['Con chó', 'Quả táo', 'Nước uống', 'Cái cây'],
+      'options': [
+        'Con chó',
+        'Quả táo',
+        'Nước uống',
+        'Cái cây',
+      ],
       'answerIndex': 1,
     },
     {
       'question': 'Từ "Banana" nghĩa là gì?',
-      'options': ['Quả chuối', 'Con mèo', 'Quyển sách', 'Xe ô tô'],
+      'options': [
+        'Quả chuối',
+        'Con mèo',
+        'Quyển sách',
+        'Xe ô tô',
+      ],
       'answerIndex': 0,
     },
     {
       'question': 'Từ "Cat" nghĩa là gì?',
-      'options': ['Ngôi nhà', 'Quả táo', 'Con mèo', 'Mặt trời'],
+      'options': [
+        'Ngôi nhà',
+        'Quả táo',
+        'Con mèo',
+        'Mặt trời',
+      ],
       'answerIndex': 2,
     },
     {
       'question': 'Từ "Dog" nghĩa là gì?',
-      'options': ['Xe ô tô', 'Nước uống', 'Quả chuối', 'Con chó'],
+      'options': [
+        'Xe ô tô',
+        'Nước uống',
+        'Quả chuối',
+        'Con chó',
+      ],
       'answerIndex': 3,
     },
     {
       'question': 'Từ "Book" nghĩa là gì?',
-      'options': ['Quyển sách', 'Mặt trời', 'Cái cây', 'Ngôi nhà'],
+      'options': [
+        'Quyển sách',
+        'Mặt trời',
+        'Cái cây',
+        'Ngôi nhà',
+      ],
       'answerIndex': 0,
     },
     {
       'question': 'Từ "Car" nghĩa là gì?',
-      'options': ['Quả táo', 'Xe ô tô', 'Con chó', 'Nước uống'],
+      'options': [
+        'Quả táo',
+        'Xe ô tô',
+        'Con chó',
+        'Nước uống',
+      ],
       'answerIndex': 1,
     },
     {
       'question': 'Từ "Sun" nghĩa là gì?',
-      'options': ['Cái cây', 'Con mèo', 'Mặt trời', 'Quả chuối'],
+      'options': [
+        'Cái cây',
+        'Con mèo',
+        'Mặt trời',
+        'Quả chuối',
+      ],
       'answerIndex': 2,
     },
     {
       'question': 'Từ "Water" nghĩa là gì?',
-      'options': ['Quyển sách', 'Ngôi nhà', 'Mặt trời', 'Nước uống'],
+      'options': [
+        'Quyển sách',
+        'Ngôi nhà',
+        'Mặt trời',
+        'Nước uống',
+      ],
       'answerIndex': 3,
     },
     {
       'question': 'Từ "House" nghĩa là gì?',
-      'options': ['Ngôi nhà', 'Quả táo', 'Xe ô tô', 'Cái cây'],
+      'options': [
+        'Ngôi nhà',
+        'Quả táo',
+        'Xe ô tô',
+        'Cái cây',
+      ],
       'answerIndex': 0,
     },
     {
       'question': 'Từ "Tree" nghĩa là gì?',
-      'options': ['Con mèo', 'Cái cây', 'Nước uống', 'Quyển sách'],
+      'options': [
+        'Con mèo',
+        'Cái cây',
+        'Nước uống',
+        'Quyển sách',
+      ],
       'answerIndex': 1,
     },
   ];
@@ -74,6 +125,9 @@ class _QuizScreenState extends State<QuizScreen> {
       isAnswered = true;
       if (index == questions[currentIndex]['answerIndex']) {
         score++;
+        if (score > scoreNotifier.value) {
+          scoreNotifier.value = score;
+        }
       }
     });
 
@@ -90,7 +144,9 @@ class _QuizScreenState extends State<QuizScreen> {
           barrierDismissible: false,
           builder: (context) => AlertDialog(
             title: const Text('Kết quả'),
-            content: Text('Bạn đã làm đúng $score/${questions.length} câu.'),
+            content: Text(
+              'Bạn đã làm đúng $score/${questions.length} câu.',
+            ),
             actions: [
               TextButton(
                 onPressed: () {
@@ -114,19 +170,21 @@ class _QuizScreenState extends State<QuizScreen> {
   @override
   Widget build(BuildContext context) {
     var currentQ = questions[currentIndex];
+    bool isDark =
+        Theme.of(context).brightness == Brightness.dark;
 
     return Scaffold(
       appBar: AppBar(
         title: const Text('Ôn tập'),
-        backgroundColor: Colors.blue,
-        foregroundColor: Colors.white,
+        centerTitle: true,
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
           children: [
             Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              mainAxisAlignment:
+                  MainAxisAlignment.spaceBetween,
               children: [
                 Text(
                   'Câu ${currentIndex + 1}/${questions.length}',
@@ -137,7 +195,13 @@ class _QuizScreenState extends State<QuizScreen> {
                 ),
                 Text(
                   'Điểm: $score',
-                  style: const TextStyle(fontSize: 18, color: Colors.blue),
+                  style: TextStyle(
+                    fontSize: 18,
+                    color: isDark
+                        ? Colors.blue.shade300
+                        : Colors.blue,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
               ],
             ),
@@ -145,7 +209,9 @@ class _QuizScreenState extends State<QuizScreen> {
             Container(
               padding: const EdgeInsets.all(20),
               decoration: BoxDecoration(
-                color: Colors.blue.shade50,
+                color: isDark
+                    ? const Color(0xFF1E293B)
+                    : Colors.blue.shade50,
                 borderRadius: BorderRadius.circular(10),
               ),
               child: Center(
@@ -164,18 +230,27 @@ class _QuizScreenState extends State<QuizScreen> {
               child: ListView.builder(
                 itemCount: currentQ['options'].length,
                 itemBuilder: (context, index) {
-                  bool isCorrect = index == currentQ['answerIndex'];
+                  bool isCorrect =
+                      index == currentQ['answerIndex'];
                   bool isSelected = index == selectedAnswer;
 
-                  Color boxColor = Colors.white;
-                  Color borderColor = Colors.grey;
+                  Color boxColor = Theme.of(
+                    context,
+                  ).cardColor;
+                  Color borderColor = isDark
+                      ? Colors.grey.shade700
+                      : Colors.grey.shade300;
 
                   if (isAnswered) {
                     if (isCorrect) {
-                      boxColor = Colors.green.shade100;
+                      boxColor = isDark
+                          ? const Color(0xFF14532D)
+                          : Colors.green.shade100;
                       borderColor = Colors.green;
                     } else if (isSelected) {
-                      boxColor = Colors.red.shade100;
+                      boxColor = isDark
+                          ? const Color(0xFF7F1D1D)
+                          : Colors.red.shade100;
                       borderColor = Colors.red;
                     }
                   }
@@ -183,16 +258,24 @@ class _QuizScreenState extends State<QuizScreen> {
                   return GestureDetector(
                     onTap: () => checkAnswer(index),
                     child: Container(
-                      margin: const EdgeInsets.only(bottom: 15),
+                      margin: const EdgeInsets.only(
+                        bottom: 15,
+                      ),
                       padding: const EdgeInsets.all(15),
                       decoration: BoxDecoration(
                         color: boxColor,
-                        border: Border.all(color: borderColor),
-                        borderRadius: BorderRadius.circular(10),
+                        border: Border.all(
+                          color: borderColor,
+                        ),
+                        borderRadius: BorderRadius.circular(
+                          10,
+                        ),
                       ),
                       child: Text(
                         currentQ['options'][index],
-                        style: const TextStyle(fontSize: 16),
+                        style: const TextStyle(
+                          fontSize: 16,
+                        ),
                       ),
                     ),
                   );
