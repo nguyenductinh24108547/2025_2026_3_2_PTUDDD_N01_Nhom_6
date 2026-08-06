@@ -9,13 +9,13 @@ import 'screens/flashcard_screen.dart';
 import 'screens/group_info_screen.dart';
 
 // 1. Khai báo các ValueNotifier quản lý trạng thái toàn cục
-final ValueNotifier<ThemeMode> themeNotifier = ValueNotifier(ThemeMode.light);
+final ValueNotifier<ThemeMode> themeNotifier =
+    ValueNotifier(ThemeMode.light);
 final ValueNotifier<Color> appColorNotifier = ValueNotifier(
   const Color(0xFF2196F3),
 );
-final ValueNotifier<Locale> appLocaleNotifier = ValueNotifier(
-  const Locale('vi'),
-);
+final ValueNotifier<Locale> appLocaleNotifier =
+    ValueNotifier(const Locale('vi'));
 final ValueNotifier<int> scoreNotifier = ValueNotifier(0);
 void main() {
   runApp(const MyApp());
@@ -44,12 +44,17 @@ class MyApp extends StatelessWidget {
                     GlobalWidgetsLocalizations.delegate,
                     GlobalCupertinoLocalizations.delegate,
                   ],
-                  supportedLocales: const [Locale('en'), Locale('vi')],
+                  supportedLocales: const [
+                    Locale('en'),
+                    Locale('vi'),
+                  ],
                   themeMode: currentTheme,
                   theme: ThemeData(
                     brightness: Brightness.light,
                     primaryColor: currentColor,
-                    scaffoldBackgroundColor: const Color(0xF2F5F8),
+                    scaffoldBackgroundColor: const Color(
+                      0xF2F5F8,
+                    ),
                     cardColor: Colors.white,
                     appBarTheme: AppBarTheme(
                       backgroundColor: currentColor,
@@ -59,10 +64,14 @@ class MyApp extends StatelessWidget {
                   darkTheme: ThemeData(
                     brightness: Brightness.dark,
                     primaryColor: currentColor,
-                    scaffoldBackgroundColor: const Color(0xFF121212),
+                    scaffoldBackgroundColor: const Color(
+                      0xFF121212,
+                    ),
                     cardColor: const Color(0xFF1E1E1E),
                     appBarTheme: AppBarTheme(
-                      backgroundColor: const Color(0xFF1E1E1E),
+                      backgroundColor: const Color(
+                        0xFF1E1E1E,
+                      ),
                       foregroundColor: Colors.white,
                     ),
                   ),
@@ -122,7 +131,8 @@ class _MainScreenState extends State<MainScreen> {
           ),
           BottomNavigationBarItem(
             icon: const Icon(Icons.style),
-            label: appLocaleNotifier.value.languageCode == 'en'
+            label:
+                appLocaleNotifier.value.languageCode == 'en'
                 ? 'Flashcard'
                 : 'Thẻ từ',
           ),
@@ -132,7 +142,8 @@ class _MainScreenState extends State<MainScreen> {
           ),
           BottomNavigationBarItem(
             icon: const Icon(Icons.info),
-            label: appLocaleNotifier.value.languageCode == 'en'
+            label:
+                appLocaleNotifier.value.languageCode == 'en'
                 ? 'Group'
                 : 'Nhóm',
           ),
